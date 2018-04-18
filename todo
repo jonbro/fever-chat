@@ -1,0 +1,22 @@
+[x] when a player connects, send it the info about all connected players
+[x] buffer the last position of connected clients so it can get sent out to all incoming connections
+[x] store messages in a database
+[x] get the messages when first loading the game
+[ ] setup pushing to glitch
+[ ] make player movement a bit better
+[ ] audio for the messages
+[ ] change text / player color
+[ ] whitelist for words (this actually doesn't feel critical for demo? and it seems like a bad idea generally? but like I like it? I dunno)
+
+ideas:
+split stuff into rooms to support more simultaneous players, less data
+teleport
+teleport doors
+realms
+locking rooms
+owners
+deletion
+fading text
+color changing
+text size changing
+audio scripting
