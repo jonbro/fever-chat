@@ -82,6 +82,9 @@ class FeverChat
         this.currentMessages.forEach(msg => {
             this.display.drawText(msg.content, msg.position);            
         });
+        this.players[0].update();
+        // update the display to center on the player
+        this.display.offset = new Vector(this.players[0].position.x-this.display.size.x*0.5, this.players[0].position.y-this.display.size.y*0.5);
         this.players.forEach(player =>{
             this.display.drawPlayer(player);
         });

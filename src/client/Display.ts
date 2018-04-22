@@ -26,7 +26,7 @@ export class Display
     }
     drawPlayer(player : Player)
     {
-        let position = player.position.copy().add(this.size.copy().multiply(0.5));
+        let position = player.position.copy().subtract(this.offset);
         this.context.strokeStyle = "white";
         this.context.fillStyle = "white";
         this.context.beginPath();
@@ -46,7 +46,6 @@ export class Display
     }
     static textOffset(text : string) : Vector
     {
-        let center = Display._instance.size.copy().multiply(0.5);
         let width = Display._instance.context.measureText(text).width;
         return new Vector(-width*0.5,0);
     }

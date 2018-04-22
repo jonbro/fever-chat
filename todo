@@ -1,12 +1,14 @@
-[x] when a player connects, send it the info about all connected players
-[x] buffer the last position of connected clients so it can get sent out to all incoming connections
-[x] store messages in a database
-[x] get the messages when first loading the game
-[ ] setup pushing to glitch
-[ ] make player movement a bit better
+[x] make player movement a bit better
+[x] camera following the player
+[ ] only render the text that is on screen
+[ ] move the server out of the server folder?
+[ ] passport js
+[ ] instances (special url that you go to get a new room)
+[ ] add in some kind of analytics
 [ ] audio for the messages
 [ ] change text / player color
 [ ] whitelist for words (this actually doesn't feel critical for demo? and it seems like a bad idea generally? but like I like it? I dunno)
+[ ] switch over to pnpm locally, it seems much better than npm
 
 ideas:
 split stuff into rooms to support more simultaneous players, less data
@@ -20,3 +22,7 @@ fading text
 color changing
 text size changing
 audio scripting
+
+on glitch console, need to do pull / refresh
+
+note, to make this run, we need to "watch server" and "build client"

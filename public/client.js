@@ -130,6 +130,15 @@ var Vector = /** @class */ (function () {
         this.y = tx * Math.sin(radians) + this.y * Math.cos(radians);
         return this;
     };
+    Vector.prototype.length = function () {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    };
+    Vector.prototype.normalize = function () {
+        var l = this.length();
+        this.x = this.x / l;
+        this.y = this.y / l;
+        return this;
+    };
     Vector.prototype.copy = function () {
         return new Vector(this.x, this.y);
     };
@@ -161,7 +170,7 @@ var Display = /** @class */ (function () {
         this.context.fillRect(0, 0, this.size.x, this.size.y);
     };
     Display.prototype.drawPlayer = function (player) {
-        var position = player.position.copy().add(this.size.copy().multiply(0.5));
+        var position = player.position.copy().subtract(this.offset);
         this.context.strokeStyle = "white";
         this.context.fillStyle = "white";
         this.context.beginPath();
@@ -179,7 +188,6 @@ var Display = /** @class */ (function () {
         this.context.fillText(text, position.x - this.offset.x, position.y - this.offset.y);
     };
     Display.textOffset = function (text) {
-        var center = Display._instance.size.copy().multiply(0.5);
         var width = Display._instance.context.measureText(text).width;
         return new Vector_1.Vector(-width * 0.5, 0);
     };
@@ -291,6 +299,9 @@ var FeverChat = /** @class */ (function () {
         this.currentMessages.forEach(function (msg) {
             _this.display.drawText(msg.content, msg.position);
         });
+        this.players[0].update();
+        // update the display to center on the player
+        this.display.offset = new Vector_1.Vector(this.players[0].position.x - this.display.size.x * 0.5, this.players[0].position.y - this.display.size.y * 0.5);
         this.players.forEach(function (player) {
             _this.display.drawPlayer(player);
         });
@@ -321,6 +332,7 @@ var Player = /** @class */ (function () {
         this.position = new Vector_1.Vector(0, 0);
         this.currentMessage = "";
         this.id = "";
+        this.direction = [];
     }
     Player.prototype.messagePosition = function () {
         return this.position.copy().add(new Vector_1.Vector(0, -20)).add(Display_1.Display.textOffset(this.currentMessage));
@@ -330,26 +342,15 @@ var Player = /** @class */ (function () {
     };
     Player.prototype.setClientPlayer = function (client) {
         var _this = this;
+        window.onkeyup = function (e) {
+            if (e.keyCode >= 37 && e.keyCode <= 40) {
+                _this.direction[e.keyCode] = false;
+            }
+        };
         // bind all the key events
         window.onkeydown = function (e) {
             if (e.keyCode >= 37 && e.keyCode <= 40) {
-                // move the player around
-                // this actually needs to be done on update :/
-                // and that means that I need to use delta time or something :?
-                switch (e.keyCode) {
-                    case 37:
-                        _this.position.add(new Vector_1.Vector(-1, 0));
-                        break;
-                    case 38:
-                        _this.position.add(new Vector_1.Vector(0, -1));
-                        break;
-                    case 39:
-                        _this.position.add(new Vector_1.Vector(1, 0));
-                        break;
-                    case 40:
-                        _this.position.add(new Vector_1.Vector(0, 1));
-                        break;
-                }
+                _this.direction[e.keyCode] = true;
             }
             // need a much better filter here. this is the standard text input
             else if (e.keyCode >= 32 && e.keyCode <= 126) {
@@ -369,6 +370,33 @@ var Player = /** @class */ (function () {
                 e.preventDefault();
             }
         };
+    };
+    Player.prototype.update = function () {
+        var vel = new Vector_1.Vector(0, 0);
+        var hasInput = false;
+        for (var i = 37; i <= 41; i++) {
+            if (this.direction[i]) {
+                // should eventually make this a unit vector :/
+                switch (i) {
+                    case 37:
+                        vel.add(new Vector_1.Vector(-1, 0));
+                        break;
+                    case 38:
+                        vel.add(new Vector_1.Vector(0, -1));
+                        break;
+                    case 39:
+                        vel.add(new Vector_1.Vector(1, 0));
+                        break;
+                    case 40:
+                        vel.add(new Vector_1.Vector(0, 1));
+                        break;
+                }
+                hasInput = true;
+            }
+        }
+        if (hasInput) {
+            this.position.add(vel.normalize());
+        }
     };
     return Player;
 }());

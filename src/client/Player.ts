@@ -7,6 +7,7 @@ export class Player
     position : Vector = new Vector(0,0);
     currentMessage : string = "";
     id : string = "";
+    direction : boolean[] = [];
     messagePosition()
     {
         return this.position.copy().add(new Vector(0, -20)).add(Display.textOffset(this.currentMessage));
@@ -17,29 +18,19 @@ export class Player
     }
     setClientPlayer(client : SocketIOClient.Socket)
     {
+        window.onkeyup = (e)=>
+        {
+            if(e.keyCode >= 37 && e.keyCode <= 40)
+            {
+                this.direction[e.keyCode] = false;
+            }            
+        }
         // bind all the key events
         window.onkeydown = (e) =>
         {
             if(e.keyCode >= 37 && e.keyCode <= 40)
             {
-                // move the player around
-                // this actually needs to be done on update :/
-                // and that means that I need to use delta time or something :?
-                switch(e.keyCode)
-                {
-                    case 37:
-                        this.position.add(new Vector(-1, 0));
-                        break;
-                    case 38:
-                        this.position.add(new Vector(0, -1));
-                        break;
-                    case 39:
-                        this.position.add(new Vector(1, 0));
-                        break;
-                    case 40:
-                        this.position.add(new Vector(0, 1));
-                        break;
-                }
+                this.direction[e.keyCode] = true;
             }
             // need a much better filter here. this is the standard text input
             else if(e.keyCode >= 32 && e.keyCode <= 126){
@@ -61,6 +52,37 @@ export class Player
             {
                 e.preventDefault();    
             }
+        }
+    }
+    update()
+    {     
+        let vel = new Vector(0,0);
+        let hasInput : boolean = false;
+        for (let i = 37; i <= 41; i++) {
+            if(this.direction[i])
+            {
+                // should eventually make this a unit vector :/
+                switch(i)
+                {
+                    case 37:
+                        vel.add(new Vector(-1, 0));
+                        break;
+                    case 38:
+                        vel.add(new Vector(0, -1));
+                        break;
+                    case 39:
+                        vel.add(new Vector(1, 0));
+                        break;
+                    case 40:
+                        vel.add(new Vector(0, 1));
+                        break;
+                }
+                hasInput = true;
+            }
+        }
+        if(hasInput)
+        {
+            this.position.add(vel.normalize());
         }
     }
 }

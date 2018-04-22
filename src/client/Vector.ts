@@ -79,6 +79,19 @@ export class Vector
         this.y = tx * Math.sin(radians) + this.y * Math.cos(radians); 
         return this;
     }
+    length()
+    :number
+    {
+        return Math.sqrt(this.x*this.x+this.y*this.y);
+    }
+    normalize()
+    :Vector
+    {
+        let l = this.length();
+        this.x = this.x / l;
+        this.y = this.y / l;
+        return this;
+    }
     copy()
     : Vector
     {
